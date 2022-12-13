@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Code Destroyer</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <%- include('../_partial/_header'); -%> 
+  <%- include('../css/background'); -%> 
+  <%- include('../css/btn'); -%> 
+  <%- include('../css/stylesheet'); -%> 
+</head>
+
+<style>
+.page-link {
+  background: #292929;
+  border: none;
+  color: lightgrey;
+  box-shadow: #292929 0 5px 20px 0px;
+}
+</style>
+
+<body>
+  <div class="row">
+    <div class="leftcolumn">
+      <div class="card" style = "position: fixed; height: fit-content; background-color: transparent; border: none;">
+      <!--<h2>Languages</h2>-->
+        <div id="languages">
+          <button class="emptybutton"><a class="button-54" style="color: #1C2833;" href="/home"><b>Home</b></a></button>
+          <button class="emptybutton"><a class="button-54" style="color: #1C2833;" href="/cpp"><b>C++</b></a></button>
+          <button class="emptybutton"><a class="button-54" style="color: #1C2833;" href="/java"><b>Java</b></a></button>
+          <button class="emptybutton"><a class="button-54" style="color: #1C2833;" href="/javascript"><b>JavaScript</b></a></button> 
+          <button class="emptybutton"><a class="button-54" style="color: #1C2833;" href="/sql"><b>SQL</b></a></button>
+          <button class="emptybutton"><a class="button-54" style="color: #1C2833;" href="/asp"><b>ASP.NET</b></a></button>
+          <button class="emptybutton"><a class="button-54" style="color: #1C2833;" href="/python"><b>Python</b></a></button> 
+        </div>
+    </div>
+  </div>
+    
+  <div class="rightcolumn">
+    <div style="margin-top: 20px;">
+      <button class="emptybutton" style="display: inline-block;"><a class="button-34" href="?sortby=publishDate">Latest</a></button>
+      <button class="emptybutton" style="display: inline-block;"><a class="button-34" href="?sortby=duration">Longest</a></button>
+      <button class="emptybutton" style="display: inline-block;"><a class="button-34" href="?sortby=viewCount">Most View</a></button>
+      <button class="emptybutton" style="display: inline-block;"><a class="button-34" href="?sortby=rating">Best Rating</a></button>
+    </div>
+    <div>
+      <% if(data.length){ for(var i = 0; i< data.length; i++) {%>
+        <div class="card second" style = "height: 400px;">
+          <div class="video" style = "height: 200px;">
+            <iframe id="videoFrame" src="https://www.youtube.com/embed/<%= data[i].vid %>">
+            </iframe>
+          </div>
+        </div>
+      <% } } %>
+    </div>
+    <div class="container mt-3">
+      <ul class="pagination">
+          <% let nextDisplay = 2; %>
+          <% let prevDisplay = 2; %>
+          <li class="page-item disabled"><a class="page-link" style="background: #1C2833; color: lightgrey;" href="#"><%= pager.maxRecord %> Records</a></li>
+          <li class="page-item disabled"><a class="page-link" style="background: #1C2833; color: lightgrey;" href="#"><%= pager.pageCount %> Pages</a></li>
+          <li class="page-item"><a class="page-link" href="?sortby=<%= sortby %>&page=1">FIRST</a></li>
+
+          <!-- 
+          <% if(parseInt(pager.pageCurrent) == 1) { %>
+              <li class="page-item disabled"><a class="page-link" href="/admin?page=<%= parseInt(pager.pageCurrent) - 1 %>">Previous</a></li>
+          <% } else { %>
+              <li class="page-item"><a class="page-link" href="/admin?page=<%= parseInt(pager.pageCurrent) - 1 %>">Previous</a></li>
+          <% } %>
+          -->
+
+          <% for(let i=prevDisplay; i > 0; i--) { %>
+              <% if(parseInt(pager.pageCurrent) - i > 0) { %>
+                  <li class="page-item"><a class="page-link" 
+                      href="?sortby=<%= sortby %>&page=<%= parseInt(pager.pageCurrent) - i %>">
+                      <%= parseInt(pager.pageCurrent) - i %></a>
+                  </li>
+              <% } %>
+          <% } %>
+
+          <li class="page-item active"><a class="page-link" href="?sortby=<%= sortby %>&page=<%= pager.pageCurrent %>"><%= pager.pageCurrent %></a></li>
+
+          <% for(let i=1; i <= nextDisplay; i++) { %>
+              <% if(parseInt(pager.pageCurrent) + i <= pager.pageCount) { %>
+                  <li class="page-item"><a class="page-link" href="?sortby=<%= sortby %>&page=<%= parseInt(pager.pageCurrent) + i %>"><%= parseInt(pager.pageCurrent) + i %></a></li>
+              <% } %>
+          <% } %>
+
+          <% if(parseInt(pager.pageCurrent) == pager.pageCount) { %>
+              <li class="page-item disabled"><a class="page-link" href="?sortby=<%= sortby %>&page=<%= parseInt(pager.pageCurrent) - 1 %>">NEXT</a></li>
+          <% } else { %>
+              <li class="page-item"><a class="page-link" href="?sortby=<%= sortby %>&page=<%= parseInt(pager.pageCurrent) + 1 %>">NEXT</a></li>
+          <% } %>
+
+          <li class="page-item"><a class="page-link" href="?sortby=<%= sortby %>&page=<%= pager.pageCount %>">LAST</a></li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
+
+
+<%- include('../_partial/_footer'); -%>

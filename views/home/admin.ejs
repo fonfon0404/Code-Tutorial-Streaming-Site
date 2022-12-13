@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>Admin</title>
+    <%- include('../_partial/_header'); -%> 
+    <%- include('../css/background'); -%> 
+    <%- include('../css/stylesheet'); -%> 
+    <%- include('../css/dialogbox'); -%> 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">   
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="main">
+            <div class="select">
+                <form action="/admin/search" method="post">
+                    <select name="videoType" id="">
+                        <option value="all">ALL</option>
+                        <option value="asp">ASP.NET</option>
+                        <option value="cpp">C++</option>
+                        <option value="java">Java</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="python">Python</option>
+                        <option value="sql">SQL</option>
+                    </select>
+                    <div class="search">
+                        <!-- 
+                        <input type="text"> 
+                        -->
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </form> 
+                <button type="button" class="btn btn-primary" onclick="addBox()">Add record</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <table class="table table-dark table-striped">
+            <thead>
+                <tr>
+                    <th>Video ID</th>
+                    <th>Type</th>
+                    <th>Video Name</th>
+                    <th>View</th>
+                    <th>Like</th>
+                    <th>Publish Date</th>
+                    <th>Duration</th>
+                    <th>operation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% data.forEach(function(item) { %>
+                <tr>
+                    <td><%= item.vid %></td>
+                    <td><%= item.type %></td>
+                    <td><%= item.vname %></td>
+                    <td><%= item.viewCount %></td>
+                    <td><%= item.likeCount %></td>
+                    <td><%= moment(item.publishDate).format('MM/DD/YYYY') %></td>
+                    <td><%= item.duration %></td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-primary" onclick="updateBox(<%= JSON.stringify(item) %>)">Update</button>
+                            <button type="button" class="btn btn-danger" onclick="deleteBox('<%= item.vid %>')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="dialog" id="dialog" onclick="hideBox()"></div>
+
+    <div class="dialog-content" id="addbox">
+        <div class="dialog-header">
+            <h3>Add</h3>
+            <div class="close">
+                <span class="close" onclick="hideBox()">&times;</span>
+            </div>
+        </div>
+        <form action="/admin/add" method="post">
+            <div>
+                <p>Video ID</p>
+                <p>
+                    <input type="text" class="form-control" autofocus placeholder="Embedded id" name="videoId" required/>
+                </p>
+            </div>
+            <div>
+                <p>Video Type</p>
+                <p>
+                    <div>
+                        <select class="box-select" name="videoType" id="">
+                            <option value="asp">ASP.NET</option>
+                            <option value="cpp">C++</option>
+                            <option value="java">Java</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="python">Python</option>
+                            <option value="sql">SQL</option>
+                        </select>
+                    </div>
+                </p>
+            </div>
+            <div>
+                <p>Video Name</p>
+                <p>
+                    <input type="text" class="form-control" name="videoName" required/>
+                </p>
+            </div>
+            <div>
+                <p>View Count</p>
+                <p>
+                    <input type="text" class="form-control" name="viewCount" required/>
+                </p>
+            </div>
+            <div>
+                <p>Like Count</p>
+                <p>
+                    <input type="text" class="form-control" name="likeCount" required/>
+                </p>
+            </div>
+            <div>
+                <p>Publish Date</p>
+                <p>
+                    <div class="md-form md-outline input-with-post-icon datepicker">
+                        <input placeholder="Select date" type="date" class="form-control" name="publishDate" required>
+                      </div>
+                </p>
+            </div>
+            <div>
+                <p>Duration</p>
+                <p>
+                    <input type="text" class="form-control" autofocus placeholder="00:00:00" name="duration" required/>
+                </p>
+            </div>
+            <div class="dialog-footer">
+                <button class="form__button btn btn-primary" type="submit">Submit</button>
+                <!-- <button class="cancel" onclick="hideAdd()">Cancel</button> --> 
+            </div>
+        </form>
+    </div>
+    
+    <div class="dialog-content" id="deletebox">
+        <div class="dialog-header">
+            <div class="close">
+                <span class="close" onclick="hideBox()">&times;</span>
+            </div>
+        </div>
+        <form action="/admin/delete" method="post">
+            <div><h5>Please confirm to delete video</h5></div>
+            <div id="deleteTarget">
+                <input id="deleteBoxInput" type="hidden" name="videoId"></input>
+            </div>
+            <div class="dialog-footer">
+                <button class="form__button btn btn-primary" type="submit">Confirm</button>
+                <!-- <button class="cancel" onclick="hideAdd()">Cancel</button> --> 
+            </div>
+        </form>
+    </div>
+    
+    <div class="dialog-content" id="updatebox">
+        <div class="dialog-header">
+            <h3>Update</h3>
+            <div class="close">
+                <span class="close" onclick="hideBox()">&times;</span>
+            </div>
+        </div>
+        <form action="/admin/update" method="post">
+            <div>
+                <p>Video ID</p>
+                <p>
+                    <input type="text" class="form-control" name="videoId" id="updatevid" required/>
+                </p>
+            </div>
+            <div>
+                <p>Video Type</p>
+                <p>
+                    <div>
+                        <select class="box-select" name="videoType" id="updatetpye">
+                            <option value="asp" id="aspop">ASP.NET</option>
+                            <option value="cpp" id="cppop">C++</option>
+                            <option value="java" id="javaop">Java</option>
+                            <option value="javascript" id="javascriptop">JavaScript</option>
+                            <option value="python" id="pythonop">Python</option>
+                            <option value="sql" id="sqlop">SQL</option>
+                        </select>
+                    </div>
+                </p>
+            </div>
+            <div>
+                <p>Video Name</p>
+                <p>
+                    <input type="text" class="form-control" name="videoName" id="updatevname" required/>
+                </p>
+            </div>
+            <div>
+                <p>View Count</p>
+                <p>
+                    <input type="text" class="form-control" name="viewCount" id="updateview" required/>
+                </p>
+            </div>
+            <div>
+                <p>Like Count</p>
+                <p>
+                    <input type="text" class="form-control" name="likeCount" id="updatelike" required/>
+                </p>
+            </div>
+            <div>
+                <p>Publish Date</p>
+                <p>
+                    <div class="md-form md-outline input-with-post-icon datepicker">
+                        <input placeholder="Select date" type="date" class="form-control" name="publishDate" id="updatepublish" required>
+                    </div>
+                </p>
+            </div>
+            <div>
+                <p>Duration</p>
+                <p>
+                    <input type="text" class="form-control" name="duration" id="updateduration" required/>
+                </p>
+            </div>
+            <div class="dialog-footer">
+                <button class="form__button btn btn-primary" type="submit">Submit</button>
+                <!-- <button class="cancel" onclick="hideAdd()">Cancel</button> --> 
+            </div>
+        </form>
+    </div>
+
+    <div class="container mt-3">
+        <ul class="pagination">
+            <% let nextDisplay = 2; %>
+            <% let prevDisplay = 2; %>
+            <li class="page-item disabled"><a class="page-link" href="#"><%= pager.maxRecord %> records</a></li>
+            <li class="page-item disabled"><a class="page-link" href="#"><%= pager.pageCount %> pages</a></li>
+            <li class="page-item"><a class="page-link" href="?searchType=<%= searchType %>&page=1">First page</a></li>
+
+            <!-- 
+            <% if(parseInt(pager.pageCurrent) == 1) { %>
+                <li class="page-item disabled"><a class="page-link" href="/admin?page=<%= parseInt(pager.pageCurrent) - 1 %>">Previous</a></li>
+            <% } else { %>
+                <li class="page-item"><a class="page-link" href="/admin?page=<%= parseInt(pager.pageCurrent) - 1 %>">Previous</a></li>
+            <% } %>
+            -->
+
+            <% for(let i=prevDisplay; i > 0; i--) { %>
+                <% if(parseInt(pager.pageCurrent) - i > 0) { %>
+                    <li class="page-item"><a class="page-link" 
+                        href="?searchType=<%= searchType %>&page=<%= parseInt(pager.pageCurrent) - i %>">
+                        <%= parseInt(pager.pageCurrent) - i %></a>
+                    </li>
+                <% } %>
+            <% } %>
+
+            <li class="page-item active"><a class="page-link" href="?searchType=<%= searchType %>&page=<%= pager.pageCurrent %>"><%= pager.pageCurrent %></a></li>
+
+            <% for(let i=1; i <= nextDisplay; i++) { %>
+                <% if(parseInt(pager.pageCurrent) + i <= pager.pageCount) { %>
+                    <li class="page-item"><a class="page-link" href="?searchType=<%= searchType %>&page=<%= parseInt(pager.pageCurrent) + i %>"><%= parseInt(pager.pageCurrent) + i %></a></li>
+                <% } %>
+            <% } %>
+
+            <% if(parseInt(pager.pageCurrent) == pager.pageCount) { %>
+                <li class="page-item disabled"><a class="page-link" href="?searchType=<%= searchType %>&page=<%= parseInt(pager.pageCurrent) - 1 %>">Next</a></li>
+            <% } else { %>
+                <li class="page-item"><a class="page-link" href="?searchType=<%= searchType %>&page=<%= parseInt(pager.pageCurrent) + 1 %>">Next</a></li>
+            <% } %>
+
+            <li class="page-item"><a class="page-link" href="?searchType=<%= searchType %>&page=<%= pager.pageCount %>">Last page</a></li>
+        </ul>
+    </div>
+
+</body>
+
+<script>
+
+    function addBox() {
+        document.getElementById("dialog").style.display = "block";
+        document.getElementById("addbox").style.display = "block";
+    }
+
+    function updateBox(item) {
+        const vid = document.getElementById("updatevid");
+        const type = document.getElementById(item.type + 'op');
+        const vname = document.getElementById("updatevname");
+        const viewCount = document.getElementById("updateview");
+        const likeCount = document.getElementById("updatelike");
+        const publishDate = document.getElementById("updatepublish");
+        const duration = document.getElementById("updateduration");
+
+        let date = new Date(item.publishDate).toISOString().split('T')[0];
+
+        vid.setAttribute('value', item.vid);
+        type.setAttribute('selected', 'selected');
+        vname.setAttribute('value', item.vname);
+        viewCount.setAttribute('value', item.viewCount);
+        likeCount.setAttribute('value', item.likeCount);
+        publishDate.value = date;
+        duration.setAttribute('value', item.duration);
+
+        document.getElementById("dialog").style.display = "block";
+        document.getElementById("updatebox").style.display = "block";
+    }
+
+    function deleteBox(vid) {
+        const deleteId = document.createElement('h6');
+        const content = document.createTextNode(vid);
+        const parent = document.getElementById("deleteTarget");
+        const deleteBoxInput = document.getElementById("deleteBoxInput");
+
+        deleteBoxInput.setAttribute('value', vid);
+        deleteId.appendChild(content);
+        parent.appendChild(deleteId);
+
+        document.getElementById("dialog").style.display = "block";
+        document.getElementById("deletebox").style.display = "block";
+    }
+
+    function hideBox() {
+        document.getElementById("dialog").style.display = "none";
+        document.getElementById("addbox").style.display = "none";
+        document.getElementById("deletebox").style.display = "none";
+        document.getElementById("updatebox").style.display = "none";
+    }
+
+</script>
+
+
+<%- include('../_partial/_footer'); -%>
